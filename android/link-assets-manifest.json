@@ -1,0 +1,21 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/Gaegu-Bold.ttf",
+      "sha1": "d89b7842d95ac9678456663a578c4ba2cfd39b27"
+    },
+    {
+      "path": "src/assets/fonts/Gaegu-Light.ttf",
+      "sha1": "46d5402f5948f22f2853f662d7da4f2178ca07fe"
+    },
+    {
+      "path": "src/assets/fonts/Gaegu-Regular.ttf",
+      "sha1": "21933927fff6381dd7d758ad4a89c845abfa9e73"
+    },
+    {
+      "path": "src/assets/fonts/OFL.txt",
+      "sha1": "ff0cc88b46a5bbceacfd4c8513ea1497917e9384"
+    }
+  ]
+}
