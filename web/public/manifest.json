@@ -1,7 +1,7 @@
 {
   "name": "아콘점심요정",
   "short_name": "아콘점심요정",
-  "display": "standalone",
+  "display": "minimul-ui",
   "description": "(주)아이디어콘서트의 회사사람들을 위한 요정",
   "start_url": "/",
   "theme_color": "#000",

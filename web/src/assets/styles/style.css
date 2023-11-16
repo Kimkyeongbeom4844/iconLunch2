@@ -9,6 +9,4 @@
   --black-color: #000;
   --white-color: #fcfcfc;
   user-select: none;
-  -webkit-user-drag: none;
-  -webkit-touch-callout: none;
 }

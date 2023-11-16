@@ -13,8 +13,8 @@ const Main = () => {
       <h3>오늘 점심 뭐먹지?</h3>
       <img
         src={isTouch === true ? 만두곰 : 자만곰}
-        width={300}
-        height={300}
+        width={250}
+        height={250}
         alt={'자만곰'}
         style={{
           cursor: 'pointer',
