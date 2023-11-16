@@ -41,6 +41,7 @@ const Result = () => {
         }}
         level={3}
       />
+      <p>개발중..</p>
     </div>
   );
 };
