@@ -1,0 +1,25 @@
+.wrap {
+  width: var(--main-width);
+  background-color: #ffffff;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  user-select: none;
+}
+.opacity_text {
+  animation: 깜빡깜빡 1.5s infinite linear alternate;
+}
+
+@keyframes 깜빡깜빡 {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
