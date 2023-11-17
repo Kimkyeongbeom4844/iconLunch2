@@ -233,7 +233,7 @@ const Result = () => {
                       console.log(e);
                       setIframeError('맛집 정보를 불러올수 없습니다');
                     }}
-                    referrerPolicy={'no-referrer'}
+                    referrerPolicy={'same-origin'}
                     src={`https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=제주시청+${placeCoords.name}`}
                   />
                   <div
