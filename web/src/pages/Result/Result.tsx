@@ -186,7 +186,7 @@ const Result = () => {
                 isPanto={true} // 부드럽게 이동
                 style={{
                   width: '100%',
-                  height: '350px',
+                  height: '300px',
                 }} // 지도의 크기
                 level={1} // 지도확대레벨
               >
@@ -233,7 +233,7 @@ const Result = () => {
                       console.log(e);
                       setIframeError('맛집 정보를 불러올수 없습니다');
                     }}
-                    src={`https://m.search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=제주시청+${placeCoords.name}`}
+                    src={`http://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=제주시청+${placeCoords.name}`}
                   />
                   <div
                     style={{
