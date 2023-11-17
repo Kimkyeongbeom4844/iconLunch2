@@ -5,6 +5,7 @@ import {BiChevronLeft} from 'react-icons/bi';
 import {useNavigate} from 'react-router-dom';
 import 공복곰 from '../../assets/images/jokebear.png';
 import 호이곰 from '../../assets/images/jokebear2.gif';
+import 그로밋마커 from '../../assets/images/gromit.png';
 
 const Result = () => {
   const navigate = useNavigate();
@@ -49,14 +50,6 @@ const Result = () => {
     let watchId: number | undefined;
     (async () => {
       try {
-        console.log(window.history);
-        window.history.pushState(null, '123', window.location.href);
-        window.onpopstate = e => {
-          window.history.go(1);
-        };
-        window.onbeforeunload = e => {
-          e.preventDefault();
-        };
         const response = await fetch('/coords.json');
         const data = await response.json();
         // console.log(data);
@@ -69,13 +62,30 @@ const Result = () => {
         geocoder.coord2Address(
           selectPlace.longitude,
           selectPlace.latitude,
-          (result, status) => {
+          async (result, status) => {
             console.log(result[0], status);
             setPlaceCoords({
               ...selectPlace,
               address: result[0].road_address?.address_name,
               type: selectType,
             });
+            if (
+              typeof process.env.REACT_APP_NAVER_CLIENT_ID === 'string' &&
+              typeof process.env.REACT_APP_NAVER_CLIENT_SECRET === 'string'
+            ) {
+              const response = await fetch(
+                `https://openapi.naver.com/v1/search/image?query=${selectPlace.name}`,
+                {
+                  headers: {
+                    'X-Naver-Client-Id': process.env.REACT_APP_NAVER_CLIENT_ID,
+                    'X-Naver-Client-Secret':
+                      process.env.REACT_APP_NAVER_CLIENT_SECRET,
+                  },
+                },
+              );
+              const data = await response.json();
+              console.log(data);
+            }
           },
         );
         watchId = navigator.geolocation.watchPosition(
@@ -155,7 +165,8 @@ const Result = () => {
             새로고침
           </div>
         </div>
-      ) : typeof currentCoords !== 'undefined' ? (
+      ) : typeof currentCoords !== 'undefined' &&
+        typeof placeCoords !== 'undefined' ? (
         <div className={styles.wrap}>
           <header className={styles.header}>
             <BiChevronLeft
@@ -176,142 +187,54 @@ const Result = () => {
             />
             <h3>오늘의 메뉴</h3>
           </header>
-          {typeof placeCoords !== 'undefined' ? (
-            <>
-              <Map
-                center={{
-                  lat: placeCoords?.latitude,
-                  lng: placeCoords?.longitude,
-                }} // 지도의 중심좌표
-                isPanto={true} // 부드럽게 이동
+          <Map
+            center={{
+              lat: placeCoords.latitude,
+              lng: placeCoords.longitude,
+            }} // 지도의 중심좌표
+            isPanto={true} // 부드럽게 이동
+            style={{
+              width: '100%',
+              height: '300px',
+            }} // 지도의 크기
+            level={1} // 지도확대레벨
+          >
+            {/* 맛집 marker */}
+            <MapMarker
+              position={{
+                lat: placeCoords.latitude,
+                lng: placeCoords.longitude,
+              }}
+              image={{
+                src: 그로밋마커,
+                size: {
+                  width: 69,
+                  height: 65,
+                }, // 마커이미지의 크기입니다
+                options: {
+                  offset: {
+                    x: 32,
+                    y: 60,
+                  }, // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+                },
+              }} //커스텀 마커 옵션
+            />
+          </Map>
+          {/* 식당정보 */}
+          <div className={styles.place_info_wrap}>
+            <div>
+              <img
+                src={호이곰}
+                width={250}
                 style={{
-                  width: '100%',
-                  height: '300px',
-                }} // 지도의 크기
-                level={1} // 지도확대레벨
-              >
-                <MapMarker
-                  position={{
-                    lat: placeCoords?.latitude,
-                    lng: placeCoords?.longitude,
-                  }}
-                />
-                {/* <MapMarker
-                  position={{
-                    lat: currentCoords?.latitude,
-                    lng: currentCoords?.longitude,
-                  }}
-                /> */}
-              </Map>
-              {typeof placeCoords !== 'undefined' ? (
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    position: 'relative',
-                    flex: 1,
-                  }}>
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: 100,
-                      backgroundColor: '#FCFCFC',
-                    }}>
-                    <h3>{placeCoords.name}</h3>
-                    <h5>분류 : {placeCoords.type}</h5>
-                    <h5>주소 : {placeCoords.address}</h5>
-                  </div>
-                  <iframe
-                    style={{
-                      flex: 1,
-                    }}
-                    onLoad={() => setIframeLoad(true)}
-                    onError={e => {
-                      console.log(e);
-                      setIframeError('맛집 정보를 불러올수 없습니다');
-                    }}
-                    referrerPolicy={'same-origin'}
-                    src={`https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=제주시청+${placeCoords.name}`}
-                  />
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      backgroundColor: '#FCFCFC',
-                      display: iframeLoad === false ? 'flex' : 'none',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    {typeof iframeError === 'string' ? (
-                      <>
-                        <h4
-                          style={{
-                            width: 220,
-                          }}>
-                          {iframeError}
-                        </h4>
-                        <img
-                          src={공복곰}
-                          alt={'공복곰'}
-                          width={250}
-                          style={{
-                            objectFit: 'contain',
-                          }}
-                        />
-                        <div
-                          className={styles.reload_button}
-                          onClick={() => window.history.go(0)}>
-                          새로고침
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <img
-                          src={호이곰}
-                          width={250}
-                          style={{
-                            objectFit: 'contain',
-                          }}
-                        />
-                        <h4>정보 가져오는 중{dot}</h4>
-                      </>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: '#ffffff',
-                  }}>
-                  <img
-                    src={호이곰}
-                    width={250}
-                    style={{
-                      objectFit: 'contain',
-                    }}
-                  />
-                  <h4>정보 가져오는 중{dot}</h4>
-                </div>
-              )}
-            </>
-          ) : null}
+                  objectFit: 'contain',
+                }}
+              />
+              <h4>정보 가져오는 중{dot}</h4>
+              <p>{placeCoords.name}</p>
+              <p>{placeCoords.address}</p>
+            </div>
+          </div>
         </div>
       ) : (
         <div

@@ -24,3 +24,9 @@
 .reload_button:active {
   background-color: rgb(255, 148, 58, 0.6);
 }
+.place_info_wrap {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
