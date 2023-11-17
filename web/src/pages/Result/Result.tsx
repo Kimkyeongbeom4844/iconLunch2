@@ -19,7 +19,10 @@ const Result = () => {
     name: string;
     latitude: number;
     longitude: number;
+    address?: string;
   }>();
+
+  const geocoder = new window.kakao.maps.services.Geocoder();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -43,6 +46,14 @@ const Result = () => {
     let watchId: number | undefined;
     (async () => {
       try {
+        console.log(window.history);
+        window.history.pushState(null, '123', window.location.href);
+        window.onpopstate = e => {
+          window.history.go(1);
+        };
+        window.onbeforeunload = e => {
+          e.preventDefault();
+        };
         const response = await fetch('/coords.json');
         const data = await response.json();
         // console.log(data);
@@ -52,7 +63,17 @@ const Result = () => {
         const selectPlace =
           data[selectType][Math.floor(Math.random() * data[selectType].length)];
         console.log(selectPlace);
-        setPlaceCoords({...selectPlace});
+        geocoder.coord2Address(
+          selectPlace.longitude,
+          selectPlace.latitude,
+          (result, status) => {
+            console.log(result[0], status);
+            setPlaceCoords({
+              ...selectPlace,
+              address: result[0].road_address?.address_name,
+            });
+          },
+        );
         watchId = navigator.geolocation.watchPosition(
           position => {
             console.log(position);
@@ -108,6 +129,7 @@ const Result = () => {
           className={styles.wrap}
           style={{
             justifyContent: 'center',
+            alignItems: 'center',
           }}>
           <h4
             style={{
@@ -125,7 +147,7 @@ const Result = () => {
           />
           <div
             className={styles.reload_button}
-            onClick={() => window.location.reload()}>
+            onClick={() => window.history.go(0)}>
             새로고침
           </div>
         </div>
@@ -154,16 +176,16 @@ const Result = () => {
             <>
               <Map
                 center={{
-                  // 지도의 중심좌표
                   lat: placeCoords?.latitude,
                   lng: placeCoords?.longitude,
-                }}
+                }} // 지도의 중심좌표
+                isPanto={true} // 부드럽게 이동
                 style={{
-                  // 지도의 크기
                   width: '100%',
                   height: '350px',
-                }}
-                level={1}>
+                }} // 지도의 크기
+                level={1} // 지도확대레벨
+              >
                 <MapMarker
                   position={{
                     lat: placeCoords?.latitude,
@@ -177,7 +199,34 @@ const Result = () => {
                   }}
                 /> */}
               </Map>
-              <p>{placeCoords.name}</p>
+              {typeof placeCoords !== 'undefined' ? (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    position: 'relative',
+                    flex: 1,
+                  }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: 100,
+                      backgroundColor: '#FCFCFC',
+                    }}>
+                    <h3>{placeCoords.name}</h3>
+                    <h5>주소 : {placeCoords.address}</h5>
+                  </div>
+                  <iframe
+                    style={{
+                      flex: 1,
+                    }}
+                    src={`https://m.search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=제주시청+${placeCoords.name}`}
+                  />
+                </div>
+              ) : null}
             </>
           ) : null}
         </div>
@@ -186,6 +235,7 @@ const Result = () => {
           className={styles.wrap}
           style={{
             justifyContent: 'center',
+            alignItems: 'center',
           }}>
           <img
             src={호이곰}
