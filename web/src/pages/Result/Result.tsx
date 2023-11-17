@@ -19,8 +19,11 @@ const Result = () => {
     name: string;
     latitude: number;
     longitude: number;
-    address?: string;
+    address: string;
+    type: string;
   }>();
+  const [iframeLoad, setIframeLoad] = useState<boolean>(false);
+  const [iframeError, setIframeError] = useState<string>();
 
   const geocoder = new window.kakao.maps.services.Geocoder();
 
@@ -71,6 +74,7 @@ const Result = () => {
             setPlaceCoords({
               ...selectPlace,
               address: result[0].road_address?.address_name,
+              type: selectType,
             });
           },
         );
@@ -217,16 +221,94 @@ const Result = () => {
                       backgroundColor: '#FCFCFC',
                     }}>
                     <h3>{placeCoords.name}</h3>
+                    <h5>분류 : {placeCoords.type}</h5>
                     <h5>주소 : {placeCoords.address}</h5>
                   </div>
                   <iframe
                     style={{
                       flex: 1,
                     }}
+                    onLoad={() => setIframeLoad(true)}
+                    onError={e => {
+                      console.log(e);
+                      setIframeError('맛집 정보를 불러올수 없습니다');
+                    }}
                     src={`https://m.search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=제주시청+${placeCoords.name}`}
                   />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundColor: '#FCFCFC',
+                      display: iframeLoad === false ? 'flex' : 'none',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    {typeof iframeError === 'string' ? (
+                      <>
+                        <h4
+                          style={{
+                            width: 220,
+                          }}>
+                          {iframeError}
+                        </h4>
+                        <img
+                          src={공복곰}
+                          alt={'공복곰'}
+                          width={250}
+                          style={{
+                            objectFit: 'contain',
+                          }}
+                        />
+                        <div
+                          className={styles.reload_button}
+                          onClick={() => window.history.go(0)}>
+                          새로고침
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <img
+                          src={호이곰}
+                          width={250}
+                          style={{
+                            objectFit: 'contain',
+                          }}
+                        />
+                        <h4>정보 가져오는 중{dot}</h4>
+                      </>
+                    )}
+                  </div>
                 </div>
-              ) : null}
+              ) : (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#ffffff',
+                  }}>
+                  <img
+                    src={호이곰}
+                    width={250}
+                    style={{
+                      objectFit: 'contain',
+                    }}
+                  />
+                  <h4>정보 가져오는 중{dot}</h4>
+                </div>
+              )}
             </>
           ) : null}
         </div>
