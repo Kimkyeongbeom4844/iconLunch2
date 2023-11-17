@@ -233,7 +233,7 @@ const Result = () => {
                       console.log(e);
                       setIframeError('맛집 정보를 불러올수 없습니다');
                     }}
-                    src={`http://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=제주시청+${placeCoords.name}`}
+                    src={`https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=제주시청+${placeCoords.name}`}
                   />
                   <div
                     style={{
