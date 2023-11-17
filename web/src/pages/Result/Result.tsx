@@ -76,6 +76,7 @@ const Result = () => {
               const response = await fetch(
                 `https://openapi.naver.com/v1/search/image?query=${selectPlace.name}`,
                 {
+                  method: 'GET',
                   headers: {
                     'X-Naver-Client-Id': process.env.REACT_APP_NAVER_CLIENT_ID,
                     'X-Naver-Client-Secret':
