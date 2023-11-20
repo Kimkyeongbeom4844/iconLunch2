@@ -74,10 +74,9 @@ const Result = () => {
               typeof process.env.REACT_APP_NAVER_CLIENT_SECRET === 'string'
             ) {
               const response = await fetch(
-                `https://openapi.naver.com/v1/search/image?query=${selectPlace.name}`,
+                `https://openapi.naver.com/v1/search/image?query=${selectPlace.name}&display=10&start=1&sort=sim&filter=all`,
                 {
                   method: 'GET',
-                  mode: 'cors',
                   headers: {
                     'X-Naver-Client-Id': process.env.REACT_APP_NAVER_CLIENT_ID,
                     'X-Naver-Client-Secret':
